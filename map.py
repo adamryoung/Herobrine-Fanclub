@@ -27,12 +27,12 @@ def map_edit(mouse, array):
     if pg.mouse.get_pressed(num_buttons=3)[0]:
         position = pg.mouse.get_pos()
         array_pos = [math.floor(position[i] / rectangle_size[i]) for i in range(2)]
-        array[array_pos[0]][array_pos[1]] = 1
+        array[array_pos[1]][array_pos[0]] = 1
         return array
     elif pg.mouse.get_pressed(num_buttons=3)[2]:
         position = pg.mouse.get_pos()
         array_pos = [math.floor(position[i] / rectangle_size[i]) for i in range(2)]
-        array[array_pos[0]][array_pos[1]] = 0
+        array[array_pos[1]][array_pos[0]] = 0
         return array
     else:
         return array
@@ -42,11 +42,14 @@ def draw(array, surface):
     for i in range(len(array)):
         for j in range(len(array[i])):
             rectangle = (rectangle_size[0] * i, rectangle_size[1] * j, rectangle_size[0], rectangle_size[1])
-            if array[i][j] == 0:
+            if array[j][i] == 0:
                 COLOUR = WHITE
-            elif array[i][j] == 1:
+            elif array[j][i] == 1:
                 COLOUR = BLACK
             pg.draw.rect(surface, COLOUR, rectangle)
+    for i in range(grid_size[0]):
+        pg.draw.line(surface, BLACK, (i * rectangle_size[0], 0), (i * rectangle_size[0], screen_size[0]))
+        pg.draw.line(surface, BLACK, (0, i * rectangle_size[0]), (screen_size[0], i * rectangle_size[0]))
 
 
 class create_grid:
@@ -73,6 +76,7 @@ while running:
             running = False
             file_content = numpy.array(level_map())
             numpy.savetxt(filename, file_content)
+            print(file_content)
 
     level_map()
     pg.display.update()
