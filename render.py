@@ -5,6 +5,7 @@ import numpy as np
 filename = "map_layout.txt"
 map_array = np.loadtxt(filename)
 map_array = map_array.astype(int)
+print(map_array)
 dimensions = np.shape(map_array)
 
 pg.init()
@@ -13,11 +14,11 @@ pg.display.set_caption("Herobrine Fanclub")
 icon = pg.image.load("assets/icon.jpg")
 pg.display.set_icon(icon)
 window_size = (800, 600)
-x = 5  # range 0-dimensions[0]
-y = 5  # range 0-dimensions[1]
+x = 10  # range 0-dimensions[0]
+y = 10  # range 0-dimensions[1]
 r = 0
 sensitivity = pi / 64
-velocity = 0.05
+velocity = 0.3
 win = pg.display.set_mode(window_size)
 
 BLACK = (0, 0, 0)
@@ -33,10 +34,10 @@ def background(window_size):
     pg.display.update()
 
 
-def ray_cast(x, y, r, map_array):
-    step = abs(cos(r)) if abs(cos(r)) > abs(sin(r)) else abs(sin(r))
-    dx = cos(r) / step
-    dy = sin(r) / step
+def ray_cast(x, y, rad, map_array):
+    step = abs(cos(rad)) if abs(cos(rad)) > abs(sin(rad)) else abs(sin(rad))
+    dx = cos(rad) / step
+    dy = sin(rad) / step
     x0, y0 = x, y
     # DDA until wall detected
     while not wall_test(x, y, map_array):
@@ -69,13 +70,18 @@ def collision(x, y, r, map_array):
 
 def render(screen, dis):
     length = len(dis)
-    midline = window_size[1]
+    midline = window_size[1] / 2
     col_width = window_size[0] / length
-    h = 1
+    h = 2000
     for i in range(length):
         line_height = h / dis[i]
         half_height = line_height / 2
-        pg.draw.rect(screen, BLACK, (col_width * i, midline + half_height, col_width, line_height))
+        rectangle_specs = (col_width * i, midline - half_height, col_width, line_height)
+        col_val = dis[i] * 10
+        if col_val >= 255:
+            col_val = 255
+        colour = (col_val, col_val, col_val)
+        pg.draw.rect(screen, colour, rectangle_specs)
 
 
 running = True
@@ -85,13 +91,18 @@ while running:
         if event.type == pg.QUIT:
             running = False
 
+    pg.time.delay(100)
     background(window_size)
     d = []
-    for r1 in [r - (pi / 4), r - (pi / 8), r, r + (pi / 8), r + (pi / 4)]:
+    amount = range(-100, 100)
+    subdivisions = [r - ((pi / 4) / len(amount) * i) for i in amount]
+    for r1 in subdivisions:
         d.append(ray_cast(x, y, r1, map_array))
 
-    render(win, d)
     collision(x, y, r, map_array)
+    render(win, d)
+    pg.display.update()
+
 
     keys = pg.key.get_pressed()
 
@@ -100,6 +111,8 @@ while running:
     if keys[pg.K_d]:
         r -= sensitivity
     if keys[pg.K_w]:
-        y += vel
+        y += sin(r) * velocity
+        x += cos(r) * velocity
     if keys[pg.K_s]:
-        y -= vel
+        y -= sin(r) * velocity
+        x -= cos(r) * velocity

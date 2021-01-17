@@ -7,7 +7,7 @@ pg.init()
 screen_size = (1000, 1000)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-grid_size = [10, 10]
+grid_size = [20, 20]
 filename = "map_layout.txt"
 
 screen = pg.display.set_mode(screen_size)
