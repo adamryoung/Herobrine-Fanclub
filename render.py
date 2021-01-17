@@ -67,7 +67,7 @@ while running:
 
 
     background(window_size)
-    for r in [r - (pi / 4), r - (pi / 8), r, r + (pi / 8), r + (pi / 4)]:
-        d = ray_cast(x, y, r, map_array)
+    for r1 in [r - (pi / 4), r - (pi / 8), r, r + (pi / 8), r + (pi / 4)]:
+        d = ray_cast(x, y, r1, map_array)
         # Nolan: >>> using d (distance) and r as inputs display the appropriately sized / coloured wall slice here. <<<
     collision(x, y, r)
