@@ -8,7 +8,6 @@ map_array = map_array.astype(int)
 dimensions = np.shape(map_array)
 
 pg.init()
-
 pg.display.set_caption("Herobrine Fanclub")
 icon = pg.image.load("assets/icon.jpg")
 pg.display.set_icon(icon)
@@ -30,7 +29,6 @@ def background(window_size):
     FLOOR = pg.Color("#444141")
     pg.draw.rect(win, CEILING, (0, 0, width, height / 2))
     pg.draw.rect(win, FLOOR, (0, height / 2, width, height / 2))
-    pg.display.update()
 
 
 def ray_cast(x, y, r, map_array):
@@ -71,7 +69,7 @@ def render(screen, dis):
     length = len(dis)
     midline = window_size[1]
     col_width = window_size[0] / length
-    h = 1
+    h = 1000000000
     for i in range(length):
         line_height = h / dis[i]
         half_height = line_height / 2
@@ -89,10 +87,11 @@ while running:
     d = []
     for r1 in [r - (pi / 4), r - (pi / 8), r, r + (pi / 8), r + (pi / 4)]:
         d.append(ray_cast(x, y, r1, map_array))
-
+    print(d)
     render(win, d)
     collision(x, y, r, map_array)
 
+    pg.display.update()
     keys = pg.key.get_pressed()
 
     if keys[pg.K_a]:
@@ -100,6 +99,8 @@ while running:
     if keys[pg.K_d]:
         r -= sensitivity
     if keys[pg.K_w]:
-        y += vel
+        y += sin(r) * velocity
+        x += cos(r) * velocity
     if keys[pg.K_s]:
-        y -= vel
+        y -= sin(r) * velocity
+        y-= cos(r) * velocity
