@@ -1,4 +1,5 @@
 import pygame as pg
+import numpy
 import math
 
 pg.init()
@@ -70,8 +71,9 @@ while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
-            f = open(filename, "w")
-            f.write(file_content)
+            file_content = numpy.array(level_map())
+            numpy.savetxt(filename, file_content)
 
-    file_content = str(level_map())
+    level_map()
     pg.display.update()
+
