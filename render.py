@@ -10,7 +10,7 @@ pg.init()
 pg.display.set_caption("Herobrine Fanclub")
 icon = pg.image.load("assets/icon.jpg")
 pg.display.set_icon(icon)
-window_size = (800, 600)
+window_size = (1200, 900)
 x = 10  # range 0-dimensions[0]
 y = 10  # range 0-dimensions[1]
 r = 0
@@ -60,7 +60,7 @@ def collision(x, y, r, map_array):
     if 'x0' not in locals():
         x0, y0 = x, y
     if wall_test(x, y, map_array):
-        x, y = x0, y0
+        x, y = x0 - cos(r) * velocity, y0 - sin(r) * velocity
     x0, y0 = x, y
     return(x, y)
 
@@ -74,9 +74,9 @@ def render(screen, dis):
         line_height = h / dis[i]
         half_height = line_height / 2
         rectangle_specs = (col_width * i, midline - half_height, col_width, line_height)
-        col_val = dis[i] * 10
-        if col_val >= 255:
-            col_val = 255
+        col_val = 255 - dis[i] * dis[i]
+        if col_val < 50:
+            col_val = 50
         colour = (col_val, col_val, col_val)
         pg.draw.rect(screen, colour, rectangle_specs)
 
@@ -88,7 +88,7 @@ while running:
         if event.type == pg.QUIT:
             running = False
 
-    pg.time.delay(100)
+
     background(window_size)
     d = []
     amount = range(-100, 100)
@@ -100,9 +100,6 @@ while running:
     render(win, d)
     pg.display.update()
 
-
-    pg.time.delay(100)
-    pg.display.update()
     keys = pg.key.get_pressed()
 
     if keys[pg.K_a]:
