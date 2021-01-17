@@ -5,6 +5,7 @@ import numpy as np
 filename = "map_layout.txt"
 map_array = np.loadtxt(filename)
 map_array = map_array.astype(int)
+dimensions = np.shape(map_array)
 
 pg.init()
 
@@ -12,9 +13,9 @@ pg.display.set_caption("Herobrine Fanclub")
 icon = pg.image.load("assets/icon.jpg")
 pg.display.set_icon(icon)
 window_size = (800, 600)
-x = 500
-y = 500
-r = pi / 4
+x = 5  # range 0-dimensions[0]
+y = 5  # range 0-dimensions[1]
+r = 0
 
 
 def background(window_size):
@@ -33,25 +34,29 @@ def collision(x, y, r):
     while r < 0:
         r += 2 * pi
     while r >= 2 * pi:
-        r - + 2 * pi
+        r -= 2 * pi
 
     # Detect collisions
     pass
 
 
-def ray_cast(x, y, r):
+def ray_cast(x, y, r, map_array):
     step = abs(cos(r)) if abs(cos(r)) > abs(sin(r)) else abs(sin(r))
     dx = cos(r) / step
     dy = sin(r) / step
+    x0, y0 = x, y
     # DDA until wall detected
-    wall = False
-    while wall == False:
+    while not wall_test(x, y, map_array):
         x += dx
         y += dy
-        print('x = %s, y = %s' % (x, y), dx, dy)
-    if None:
-        wall = True
+    return ((y - y0) ** 2 + (x - x0) ** 2) ** 0.5 # Return distance from wall.
 
+
+def wall_test(x, y, map_array):
+    # Returns true if (x, y) is in a wall, false otherwise.
+    if map_array[round(y) - 1][round(x) - 1] == 1:
+        return True
+    return False
 
 running = True
 
@@ -60,6 +65,9 @@ while running:
         if event.type == pg.QUIT:
             running = False
 
+
     background(window_size)
-    ray_cast(x, y, r)
+    for r in [r - (pi / 4), r - (pi / 8), r, r + (pi / 8), r + (pi / 4)]:
+        d = ray_cast(x, y, r, map_array)
+        # Nolan: >>> using d (distance) and r as inputs display the appropriately sized / coloured wall slice here. <<<
     collision(x, y, r)
