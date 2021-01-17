@@ -1,6 +1,5 @@
 import pygame as pg
-from math import pi
-
+from math import pi, cos, sin
 
 pg.init()
 
@@ -10,7 +9,7 @@ pg.display.set_icon(icon)
 window_size = (800, 600)
 x = 500
 y = 500
-r = 0
+r = pi / 4
 
 def background(window_size):
     pg.time.delay(100)
@@ -35,8 +34,17 @@ def collision(x, y, r):
 
 
 def ray_cast(x, y, r):
-    
-
+    step = abs(cos(r)) if abs(cos(r)) > abs(sin(r)) else abs(sin(r))
+    dx = cos(r) / step
+    dy = sin(r) / step
+    #DDA until wall detected
+    wall = False
+    while wall == False:
+	    x += dx
+	    y += dy
+	    print('x = %s, y = %s' % (x, y), dx, dy)
+    if None:
+        wall = True
 
 
 running = True
