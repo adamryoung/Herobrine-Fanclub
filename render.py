@@ -6,6 +6,9 @@ pg.display.set_caption("Herobrine Fanclub")
 icon = pg.image.load("assets/icon.jpg")
 pg.display.set_icon(icon)
 window_size = (800, 600)
+x = 500
+y = 500
+r = 0
 
 def background(window_size):
     pg.time.delay(100)
@@ -17,6 +20,13 @@ def background(window_size):
     pg.draw.rect(win, FLOOR, (0, height / 2, width, height / 2))
     pg.display.update()
 
+
+def ray_cast(x, y, r):
+    fov = 90
+
+
+
+
 running = True
 
 while running:
@@ -24,5 +34,6 @@ while running:
         if event.type == pg.QUIT:
             running = False
 
-    background(window_size)
 
+    background(window_size)
+    ray_cast(x, y, r)
