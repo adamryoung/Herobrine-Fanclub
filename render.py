@@ -16,7 +16,8 @@ window_size = (800, 600)
 x = 5  # range 0-dimensions[0]
 y = 5  # range 0-dimensions[1]
 r = 0
-
+sensitivity = pi / 64
+velocity = 0.05
 
 def background(window_size):
     pg.time.delay(100)
@@ -27,17 +28,6 @@ def background(window_size):
     pg.draw.rect(win, CEILING, (0, 0, width, height / 2))
     pg.draw.rect(win, FLOOR, (0, height / 2, width, height / 2))
     pg.display.update()
-
-
-def collision(x, y, r):
-    # Keep r within bounds
-    while r < 0:
-        r += 2 * pi
-    while r >= 2 * pi:
-        r -= 2 * pi
-
-    # Detect collisions
-    pass
 
 
 def ray_cast(x, y, r, map_array):
@@ -58,6 +48,21 @@ def wall_test(x, y, map_array):
         return True
     return False
 
+
+def collision(x, y, r, map_array):
+    # Keep r within bounds
+    while r < 0:
+        r += 2 * pi
+    while r >= 2 * pi:
+        r -= 2 * pi
+
+    # Detect collisions
+    if 'x0' not in locals():
+        x0, y0 = None, None
+    if wall_test(x, y, map_array):
+        x, y = x0, y0    
+    x0, y0 = x, y
+
 running = True
 
 while running:
@@ -67,7 +72,20 @@ while running:
 
 
     background(window_size)
+    d = []
     for r1 in [r - (pi / 4), r - (pi / 8), r, r + (pi / 8), r + (pi / 4)]:
-        d = ray_cast(x, y, r1, map_array)
-        # Nolan: >>> using d (distance) and r as inputs display the appropriately sized / coloured wall slice here. <<<
-    collision(x, y, r)
+        d.append(ray_cast(x, y, r1, map_array)) 
+
+
+    collision(x, y, r, map_array)
+    
+    keys = pg.key.get_pressed()
+
+    if keys[pg.K_a]:
+        r += sensitivity
+    if keys[pg.K_d]:
+        r -= sensitivity
+    if keys[pg.K_w]:
+        y += vel
+    if keys[pg.K_s]:
+        y -= vel
