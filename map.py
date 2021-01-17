@@ -7,6 +7,7 @@ screen_size = (1000, 1000)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 grid_size = [10, 10]
+filename = "map_layout.txt"
 
 screen = pg.display.set_mode(screen_size)
 mouse = pg.mouse.get_pos()
@@ -18,6 +19,7 @@ rectangle_size = [screen_size[i] / grid_size[i] for i in range(2)]
 def level_map():
     edited_level = map_edit(mouse, new_level)
     draw(edited_level, screen)
+    return edited_level
 
 
 def map_edit(mouse, array):
@@ -68,5 +70,8 @@ while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
-    level_map()
+            f = open(filename, "w")
+            f.write(file_content)
+
+    file_content = str(level_map())
     pg.display.update()
