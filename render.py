@@ -5,11 +5,8 @@ import numpy as np
 filename = "map_layout.txt"
 map_array = np.loadtxt(filename)
 map_array = map_array.astype(int)
-print(map_array)
-dimensions = np.shape(map_array)
 
 pg.init()
-
 pg.display.set_caption("Herobrine Fanclub")
 icon = pg.image.load("assets/icon.jpg")
 pg.display.set_icon(icon)
@@ -25,17 +22,16 @@ BLACK = (0, 0, 0)
 WHITE =(255, 255, 255)
 
 def background(window_size):
-    pg.time.delay(100)
     width, height = window_size
     CEILING = pg.Color("#f64d12")
     FLOOR = pg.Color("#444141")
     pg.draw.rect(win, CEILING, (0, 0, width, height / 2))
     pg.draw.rect(win, FLOOR, (0, height / 2, width, height / 2))
-    pg.display.update()
 
 
 def ray_cast(x, y, rad, map_array):
-    step = abs(cos(rad)) if abs(cos(rad)) > abs(sin(rad)) else abs(sin(rad))
+    dimensions = np.shape(map_array)
+    step = (max(dimensions) * (2 ** 0.5)) * (abs(cos(rad)) if abs(cos(rad)) > abs(sin(rad)) else abs(sin(rad)))
     dx = cos(rad) / step
     dy = sin(rad) / step
     x0, y0 = x, y
@@ -62,10 +58,11 @@ def collision(x, y, r, map_array):
 
     # Detect collisions
     if 'x0' not in locals():
-        x0, y0 = None, None
+        x0, y0 = x, y
     if wall_test(x, y, map_array):
         x, y = x0, y0
     x0, y0 = x, y
+    return(x, y)
 
 
 def render(screen, dis):
@@ -99,11 +96,13 @@ while running:
     for r1 in subdivisions:
         d.append(ray_cast(x, y, r1, map_array))
 
-    collision(x, y, r, map_array)
+    x, y = collision(x, y, r, map_array)
     render(win, d)
     pg.display.update()
 
 
+    pg.time.delay(100)
+    pg.display.update()
     keys = pg.key.get_pressed()
 
     if keys[pg.K_a]:
